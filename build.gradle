@@ -1,0 +1,36 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+    maven {
+       url "lib"
+    }
+}
+
+dependencies {
+    compile "commons-io:commons-io:2.4"
+    compile 'com.google.guava:guava:15.0'
+    compile 'net.sf.opencsv:opencsv:2.4-SNAPSHOT'
+    runtime 'org.xerial:sqlite-jdbc:3.7.15-M1'
+    compile "postgresql:postgresql:9.1-901.jdbc4"
+}
+
+jar {
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    manifest {
+        attributes("Main-Class": "pgcopy.CopyAudit")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
